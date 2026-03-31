@@ -18,18 +18,22 @@
 #define CUBLAS_COMPUTE_32I HIPBLAS_COMPUTE_32I
 #define CUDA_R_32F HIP_R_32F
 #define CUDA_R_16BF HIP_R_16BF
-#define cublasGemmEx hipblasGemmEx_v2
+#define cublasGemmEx hipblasGemmEx
 #define CUDA_R_8I HIP_R_8I
 #define CUDA_R_32I HIP_R_32I
 #define CUBLAS_GEMM_DEFAULT_TENSOR_OP HIPBLAS_GEMM_DEFAULT
 #define cublasSgemmStridedBatched hipblasSgemmStridedBatched
-#define cublasGemmStridedBatchedEx hipblasGemmStridedBatchedEx_v2
+#define cublasGemmStridedBatchedEx hipblasGemmStridedBatchedEx
 #else
 #include <cuda_runtime.h>
 #include <cublas_v2.h>
 #endif
 
 #include <thrust/device_ptr.h>
+#include <thrust/reduce.h>
+#include <thrust/extrema.h>
+#include <thrust/iterator/counting_iterator.h>
+#include <thrust/iterator/transform_iterator.h>
 #include "cuda/helpers.h"
 #include "type_dispatch.h"
 
@@ -517,7 +521,7 @@ namespace ctranslate2 {
     }
 
     // cuBLAS assumes column-major storage, so swap a and b accordingly.
-    CUBLAS_CHECK(cublasGemmEx(cuda::get_cublas_handle(),
+    CUBLAS_CHECK(hipblasGemmEx(cuda::get_cublas_handle(),
                               transpose_b ? CUBLAS_OP_T : CUBLAS_OP_N,
                               transpose_a ? CUBLAS_OP_T : CUBLAS_OP_N,
                               n, m, k,
@@ -572,7 +576,7 @@ namespace ctranslate2 {
     int32_t beta_i = beta;
 
     // cuBLAS assumes column-major storage, so swap a and b accordingly.
-    CUBLAS_CHECK(cublasGemmEx(cuda::get_cublas_handle(),
+    CUBLAS_CHECK(hipblasGemmEx(cuda::get_cublas_handle(),
                               transpose_b ? CUBLAS_OP_T : CUBLAS_OP_N,
                               transpose_a ? CUBLAS_OP_T : CUBLAS_OP_N,
                               n, m, k,
@@ -632,7 +636,7 @@ namespace ctranslate2 {
     }
 
     // cuBLAS assumes column-major storage, so swap a and b accordingly.
-    CUBLAS_CHECK(cublasGemmStridedBatchedEx(cuda::get_cublas_handle(),
+    CUBLAS_CHECK(hipblasGemmStridedBatchedEx(cuda::get_cublas_handle(),
                                             transpose_b ? CUBLAS_OP_T : CUBLAS_OP_N,
                                             transpose_a ? CUBLAS_OP_T : CUBLAS_OP_N,
                                             n, m, k,

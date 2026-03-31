@@ -16,6 +16,11 @@ __device__ inline void __syncwarp(uint32_t mask){} //TODO: 6.1 should have this 
 
 #include "ctranslate2/types.h"
 
+#include <thrust/device_ptr.h>
+#include <thrust/iterator/counting_iterator.h>
+#include <thrust/iterator/permutation_iterator.h>
+#include <thrust/iterator/transform_iterator.h>
+
 #include "utils.h"
 
 #ifdef CT2_USE_HIP

@@ -1,5 +1,8 @@
 #include "ctranslate2/ops/gumbel_max.h"
 
+#include <thrust/iterator/counting_iterator.h>
+#include <thrust/transform.h>
+
 #include "type_dispatch.h"
 #include "cuda/helpers.h"
 #include "cuda/random.h"
